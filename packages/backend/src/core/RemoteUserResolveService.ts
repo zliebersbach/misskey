@@ -72,7 +72,7 @@ export class RemoteUserResolveService {
 		const acctLower = `${usernameLower}@${host}`;
 
 		if (user == null) {
-			const self = await this.resolveSelf(acctLower);
+			const {self, canonicalHost} = await this.resolveSelf(acctLower);
 
 			if (this.utilityService.isUriLocal(self.href)) {
 				const local = this.apDbResolverService.parseUri(self.href);
@@ -91,7 +91,7 @@ export class RemoteUserResolveService {
 			}
 
 			this.logger.succ(`return new remote user: ${chalk.magenta(acctLower)}`);
-			return await this.apPersonService.createPerson(self.href);
+			return await this.apPersonService.createPerson(self.href, canonicalHost);
 		}
 
 		// ユーザー情報が古い場合は、WebFingerからやりなおして返す
@@ -102,7 +102,7 @@ export class RemoteUserResolveService {
 			});
 
 			this.logger.info(`try resync: ${acctLower}`);
-			const self = await this.resolveSelf(acctLower);
+			const {self, canonicalHost} = await this.resolveSelf(acctLower);
 
 			if (user.uri !== self.href) {
 				// if uri mismatch, Fix (user@host <=> AP's Person id(RemoteUser.uri)) mapping.
@@ -142,7 +142,7 @@ export class RemoteUserResolveService {
 	}
 
 	@bindThis
-	private async resolveSelf(acctLower: string): Promise<ILink> {
+	private async resolveSelf(acctLower: string): Promise<{self: ILink, canonicalHost: string}> {
 		this.logger.info(`WebFinger for ${chalk.yellow(acctLower)}`);
 		const finger = await this.webfingerService.webfinger(acctLower).catch(err => {
 			this.logger.error(`Failed to WebFinger for ${chalk.yellow(acctLower)}: ${ err.statusCode ?? err.message }`);
@@ -153,6 +153,6 @@ export class RemoteUserResolveService {
 			this.logger.error(`Failed to WebFinger for ${chalk.yellow(acctLower)}: self link not found`);
 			throw new Error('self link not found');
 		}
-		return self;
+		return {self, canonicalHost: finger.subject.split('@')[1]};
 	}
 }

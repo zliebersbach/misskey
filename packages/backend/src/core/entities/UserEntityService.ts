@@ -486,6 +486,7 @@ export class UserEntityService implements OnModuleInit {
 			name: user.name,
 			username: user.username,
 			host: user.host,
+			canonicalHost: user.canonicalHost,
 			avatarUrl: (user.avatarId == null ? null : user.avatarUrl) ?? this.getIdenticonUrl(user),
 			avatarBlurhash: (user.avatarId == null ? null : user.avatarBlurhash),
 			avatarDecorations: user.avatarDecorations.length > 0 ? this.avatarDecorationService.getAll().then(decorations => user.avatarDecorations.filter(ud => decorations.some(d => d.id === ud.id)).map(ud => ({

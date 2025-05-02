@@ -62,6 +62,12 @@ export const packedUserLiteSchema = {
 			example: 'misskey.example.com',
 			description: 'The local host is represented with `null`.',
 		},
+		canonicalHost: {
+			type: 'string',
+			nullable: true, optional: false,
+			example: 'example.com',
+			description: 'The local host is represented with `null`.',
+		},
 		avatarUrl: {
 			type: 'string',
 			format: 'url',

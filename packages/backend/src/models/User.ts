@@ -248,6 +248,12 @@ export class MiUser {
 	public host: string | null;
 
 	@Column('varchar', {
+		length: 128, nullable: true,
+		comment: 'The display host of the User. It will be null if the origin of the user is local.',
+	})
+	public canonicalHost: string | null;
+
+	@Column('varchar', {
 		length: 512, nullable: true,
 		comment: 'The inbox URL of the User. It will be null if the origin of the user is local.',
 	})

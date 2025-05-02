@@ -301,7 +301,7 @@ export class ApPersonService implements OnModuleInit {
 	 * Personを作成します。
 	 */
 	@bindThis
-	public async createPerson(uri: string, resolver?: Resolver): Promise<MiRemoteUser> {
+	public async createPerson(uri: string, canonicalHost?: string, resolver?: Resolver): Promise<MiRemoteUser> {
 		if (typeof uri !== 'string') throw new Error('uri is not string');
 
 		const host = this.utilityService.punyHost(uri);
@@ -381,6 +381,7 @@ export class ApPersonService implements OnModuleInit {
 					username: person.preferredUsername,
 					usernameLower: person.preferredUsername?.toLowerCase(),
 					host,
+					canonicalHost,
 					inbox: person.inbox,
 					sharedInbox: person.sharedInbox ?? person.endpoints?.sharedInbox ?? null,
 					followersUri: person.followers ? getApId(person.followers) : undefined,
@@ -679,7 +680,7 @@ export class ApPersonService implements OnModuleInit {
 		// リモートサーバーからフェッチしてきて登録
 		// eslint-disable-next-line no-param-reassign
 		if (resolver == null) resolver = this.apResolverService.createResolver();
-		return await this.createPerson(uri, resolver);
+		return await this.createPerson(uri, undefined, resolver);
 	}
 
 	@bindThis

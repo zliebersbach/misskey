@@ -82,7 +82,7 @@ async function createRandomRemoteUser(
 	const actor = createRandomActor();
 	resolver.register(actor.id, actor);
 
-	return await personService.createPerson(actor.id, resolver);
+	return await personService.createPerson(actor.id, undefined, resolver);
 }
 
 describe('ActivityPub', () => {
@@ -165,7 +165,7 @@ describe('ActivityPub', () => {
 		test('Minimum Actor', async () => {
 			resolver.register(actor.id, actor);
 
-			const user = await personService.createPerson(actor.id, resolver);
+			const user = await personService.createPerson(actor.id, undefined, resolver);
 
 			assert.deepStrictEqual(user.uri, actor.id);
 			assert.deepStrictEqual(user.username, actor.preferredUsername);
@@ -193,7 +193,7 @@ describe('ActivityPub', () => {
 
 			resolver.register(actor.id, actor);
 
-			const user = await personService.createPerson(actor.id, resolver);
+			const user = await personService.createPerson(actor.id, undefined, resolver);
 
 			assert.deepStrictEqual(user.name, actor.name.slice(0, 128));
 		});
@@ -206,7 +206,7 @@ describe('ActivityPub', () => {
 
 			resolver.register(actor.id, actor);
 
-			const user = await personService.createPerson(actor.id, resolver);
+			const user = await personService.createPerson(actor.id, undefined, resolver);
 
 			assert.strictEqual(user.name, null);
 		});
@@ -231,7 +231,7 @@ describe('ActivityPub', () => {
 				first: `${actor.followers}?page=1`,
 			});
 
-			const user = await personService.createPerson(actor.id, resolver);
+			const user = await personService.createPerson(actor.id, undefined, resolver);
 			const userProfile = await userProfilesRepository.findOneByOrFail({ userId: user.id });
 
 			assert.deepStrictEqual(userProfile.followingVisibility, 'public');
@@ -251,7 +251,7 @@ describe('ActivityPub', () => {
 			resolver.register(actor.id, actor);
 			//resolver.register(actor.followers, { … });
 
-			const user = await personService.createPerson(actor.id, resolver);
+			const user = await personService.createPerson(actor.id, undefined, resolver);
 			const userProfile = await userProfilesRepository.findOneByOrFail({ userId: user.id });
 
 			assert.deepStrictEqual(userProfile.followingVisibility, 'private');
@@ -278,7 +278,7 @@ describe('ActivityPub', () => {
 			resolver.register(actor.id, actor);
 			resolver.register(actor.featured, featured);
 
-			await personService.createPerson(actor.id, resolver);
+			await personService.createPerson(actor.id, undefined, resolver);
 
 			// All notes in `featured` are same-origin, no need to fetch notes again
 			assert.deepStrictEqual(resolver.remoteGetTrials(), [actor.id, actor.featured]);
@@ -309,7 +309,7 @@ describe('ActivityPub', () => {
 			resolver.register(actor2.id, actor2);
 			resolver.register(actor2Note.id, actor2Note);
 
-			await personService.createPerson(actor1.id, resolver);
+			await personService.createPerson(actor1.id, undefined, resolver);
 
 			// actor2Note is from a different server and needs to be fetched again
 			assert.deepStrictEqual(

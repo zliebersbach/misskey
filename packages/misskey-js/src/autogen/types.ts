@@ -4027,6 +4027,11 @@ export type components = {
        * @example misskey.example.com
        */
       host: string | null;
+      /**
+       * @description The local host is represented with `null`.
+       * @example example.com
+       */
+      canonicalHost: string | null;
       /** Format: url */
       avatarUrl: string | null;
       avatarBlurhash: string | null;
